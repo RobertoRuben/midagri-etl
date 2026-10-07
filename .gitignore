@@ -1,0 +1,32 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Secretos
+.env
+.env.*
+!.env.example
+
+# Artefactos locales
+logs/
+outputs/
+.pytest_cache/
+.ruff_cache/
+
+# Claude y agentes
+.claude/
+CLAUDE.md
+.agents/
+skills-lock.json
+
+# Documentacion
+docs/
+specs/
+tests/

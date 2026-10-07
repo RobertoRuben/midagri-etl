@@ -1,0 +1,80 @@
+[project]
+name = "midagri"
+version = "0.1.0"
+description = "API ETL de precios SISAP (MIDAGRI): ingesta multi-mercado, faltantes de catálogo y logger de ejecuciones."
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "aioodbc>=0.5.0",
+    "aiosmtplib>=5.1.3",
+    "alembic>=1.20.0",
+    "asyncer>=0.0.18",
+    "asyncpg>=0.31.0",
+    "beautifulsoup4>=4.15.0",
+    "fastapi[standard]>=0.141.1",
+    "html5lib>=1.1",
+    "httpx>=0.28.1",
+    "lxml>=6.1.3",
+    "pandas>=2.0",
+    "polars[excel]>=1.44.2",
+    "pydantic-settings>=2.15.0",
+    "pyodbc>=5.1.0",
+    "python-dotenv>=1.0.1",
+    "requests>=2.31",
+    "sqlalchemy[asyncio]>=2.0.54",
+    "tzdata>=2026.4",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "ruff>=0.16.8",
+    "ty>=0.0.84",
+]
+
+[build-system]
+requires = ["uv_build>=0.8.14,<0.9"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "app"
+module-root = "src"
+
+[tool.fastapi]
+entrypoint = "app.main:app"
+
+[tool.ruff]
+line-length = 120
+target-version = "py314"
+src = ["src", "tests"]
+extend-exclude = ["system", "run.py", "main.py", "alembic/versions", "specs", "docs", ".agents"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "C4", "UP", "SIM", "FAST", "ASYNC"]
+ignore = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.ty.environment]
+python-version = "3.14"
+
+[tool.ty.src]
+include = ["src", "tests", "alembic"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+markers = [
+    "db: pruebas de integración contra las bases del .env (QAS y PostgreSQL); opt-in con -m db",
+    "network: pruebas contra el portal SISAP real; opt-in con -m network",
+]
+addopts = "-m 'not db and not network'"
+filterwarnings = [
+    # Aviso interno de polars.read_excel (fastexcel) en 1.44; no viene de este proyecto.
+    'ignore:from_arrow\(<ArrowStreamExportable>\) will return a Series:FutureWarning',
+]
